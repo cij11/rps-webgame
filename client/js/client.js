@@ -29,6 +29,17 @@ sock.on('message', (text) => {
   writeEvent(text);
 });
 
+const addButtonListeners = () => {
+  ['rock', 'paper', 'scissors'].forEach((id) => {
+    const button = document.getElementById(id);
+    button.addEventListener('click', () => {
+      sock.emit('move', id);
+    })
+  })
+};
+
 writeEvent('Welcome to RPS');
 
 document.querySelector('#chat-form').addEventListener('submit', onFormSubmitted);
+
+addButtonListeners();
