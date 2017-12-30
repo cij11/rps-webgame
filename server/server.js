@@ -14,9 +14,16 @@ const server = http.createServer(app);
 
 const io = socketio(server);
 
+//io handles all sockets. Each sock is a single connected socket.
 io.on('connection', (sock) => {
   console.log('Someone connected');
   sock.emit('message', 'Hi, you are connected');
+
+  //When I get a message from a single socket...
+  sock.on('message', (text) => {
+    //Emit to all sockets
+    io.emit('message', text);
+  });
 });
 
 server.on('error', (err) => {

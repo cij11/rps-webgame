@@ -10,6 +10,17 @@ const writeEvent = (text) => {
   parent.appendChild(el);
 }
 
+const onFormSubmitted = (e) => {
+  e.preventDefault(); //Don't want to reload page
+
+  const input = document.querySelector('#chat');
+  const text = input.value; //Get input
+  input.value = '';         //Clear input field
+
+  //Send text
+  sock.emit('message', text);
+};
+
 //Save reference to socket.
 const sock = io();
 
@@ -19,3 +30,5 @@ sock.on('message', (text) => {
 });
 
 writeEvent('Welcome to RPS');
+
+document.querySelector('#chat-form').addEventListener('submit', onFormSubmitted);
