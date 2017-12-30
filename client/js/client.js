@@ -27,6 +27,7 @@ const sock = io();
 //Register event for recieving message of type 'message' and text string 'text'
 sock.on('message', (text) => {
   writeEvent(text);
+  scrollMessagesToBottom();
 });
 
 const addButtonListeners = () => {
@@ -37,6 +38,11 @@ const addButtonListeners = () => {
     })
   })
 };
+
+const scrollMessagesToBottom = () => {
+  var messageList = document.querySelector('#events');
+  messageList.scrollTop = messageList.scrollHeight;
+}
 
 writeEvent('Welcome to RPS');
 
