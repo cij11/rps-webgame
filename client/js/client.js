@@ -2,10 +2,11 @@
 const writeEvent = (text) => {
   // <ul> element
   const parent = document.querySelector('#events');
-
+  var text_node = document.createTextNode(text);
   // <li> element
   const el = document.createElement('li');
-  el.innerHTML = text;
+  el.appendChild(text_node);
+//  el.innerHTML = text;
 
   parent.appendChild(el);
 }
@@ -47,7 +48,8 @@ sock.on('update-names', nameList => {
   playerNames.innerHTML = '';
   _.forEach(nameList, name => {
     const el = document.createElement('li');
-    el.innerHTML = name;
+    var text_node = document.createTextNode(name);
+    el.appendChild(text_node);
     playerNames.appendChild(el);
   })
 })
