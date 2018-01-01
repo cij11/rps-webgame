@@ -3,7 +3,8 @@ const express = require('express');
 const socketio = require('socket.io'); //Takes an http server instance
 const _ = require('lodash');
 const RpsGame = require('./rps.js');
-const ReadyRoom = require('./ready-room.js')
+const ReadyRoom = require('./ready-room.js');
+const Player = require('./player.js');
 
 
 //__dirname points to current path of current module
@@ -24,16 +25,17 @@ readyRoomId++;
 
 //io handles all sockets. Each sock is a single connected socket.
 io.on('connection', (sock) => {
+  var player = new Player(sock);
 
   //If there a ready room being filled
-  if (!fillingReadyRoom.isFull()) {
-    fillingReadyRoom.addPlayer(sock);
+  if (fillingReadyRoom.isJoinable()) {
+    fillingReadyRoom.addPlayer(player);
   }
   else {
     //Set the just joined player as the waiting player
     fillingReadyRoom = new ReadyRoom(readyRoomId);
     readyRoomId++;
-    fillingReadyRoom.addPlayer(sock);
+    fillingReadyRoom.addPlayer(player);
   }
 
   console.log('Someone connected');

@@ -10,7 +10,7 @@ const writeEvent = (text) => {
   parent.appendChild(el);
 }
 
-const onFormSubmitted = (e) => {
+const onChatSubmitted = (e) => {
   e.preventDefault(); //Don't want to reload page
 
   const input = document.querySelector('#chat');
@@ -19,6 +19,17 @@ const onFormSubmitted = (e) => {
 
   //Send text
   sock.emit('message', text);
+};
+
+const onRenameSubmitted = (e) => {
+  e.preventDefault(); //Don't want to reload page
+
+  const input = document.querySelector('#rename-text');
+  const text = input.value; //Get input
+  input.value = '';         //Clear input field
+
+  //Send text
+  sock.emit('rename', text);
 };
 
 //Save reference to socket.
@@ -30,11 +41,23 @@ sock.on('message', (text) => {
   scrollMessagesToBottom();
 });
 
+sock.on('update-names', nameList => {
+  console.log(nameList);
+  const playerNames = document.querySelector('#player-names');
+  playerNames.innerHTML = '';
+  _.forEach(nameList, name => {
+    const el = document.createElement('li');
+    el.innerHTML = name;
+    playerNames.appendChild(el);
+  })
+})
+
 const addButtonListeners = () => {
   ['rock', 'paper', 'scissors'].forEach((id) => {
     const button = document.getElementById(id);
     button.addEventListener('click', () => {
       sock.emit('move', id);
+      sock.emit('rename', id);
     })
   })
 };
@@ -46,6 +69,7 @@ const scrollMessagesToBottom = () => {
 
 writeEvent('Welcome to RPS');
 
-document.querySelector('#chat-form').addEventListener('submit', onFormSubmitted);
+document.querySelector('#chat-form').addEventListener('submit', onChatSubmitted);
+document.querySelector('#rename-form').addEventListener('submit', onRenameSubmitted);
 
 addButtonListeners();
