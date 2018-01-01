@@ -8,9 +8,14 @@ class ReadyRoom {
 
   constructor(id) {
       this._id = id;
-      this._maxPlayers = 3;
+      this._maxPlayers = 2;
       this._players = [];
       this._isGameStarted = false;
+
+
+      //Game variables. Pull these out into separate class after prototyping
+      this._framerate = 1;
+      this._frameDelay = 1000/this._framerate;
   }
 
   addPlayer(player) {
@@ -42,7 +47,19 @@ class ReadyRoom {
     sock.on('rename', text => {
       player.setName(text);
       this.sendPlayerNameList();
-    })
+    });
+
+    var self = this;
+    var loop = function() {
+      self.messagePlayers("Frame processed");
+      self.sendGameState();
+      setTimeout(loop, 100);
+    }
+
+    if (this._isFull()) {
+      this._isGameStarted = true;
+      setTimeout(loop, 100);
+    }
   }
 
   getPlayerCounter() {
@@ -66,7 +83,13 @@ class ReadyRoom {
   messagePlayers(msg) {
     _.forEach(this._players, player => {
       player.messagePlayer(msg);
-    })
+    });
+  }
+
+  sendGameState() {
+    _.forEach(this._players, player => {
+      player.sendGameState();
+    });
   }
 
   sendPlayerNameList() {
@@ -76,7 +99,13 @@ class ReadyRoom {
 
     _.forEach(this._players, player => {
       player.sendPlayerNameList(playerNameList);
-    })
+    });
+  }
+
+  _gameLoop() {
+    var self = this;
+  //  this.messagePlayers("Frame processed");
+    setTimeout((this._gameLoop), self._frameDelay);
   }
 }
 

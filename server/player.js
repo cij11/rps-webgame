@@ -20,6 +20,13 @@ class Player {
     this._sock.emit('message', msg);
   }
 
+  sendGameState() {
+    this._sock.emit('newPositions', {
+      x: 30,
+      y: 30
+    });
+  }
+
   setName(name) {
     this._name = name;
   }

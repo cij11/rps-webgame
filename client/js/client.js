@@ -73,3 +73,11 @@ document.querySelector('#chat-form').addEventListener('submit', onChatSubmitted)
 document.querySelector('#rename-form').addEventListener('submit', onRenameSubmitted);
 
 addButtonListeners();
+
+const ctx = document.querySelector('#ctx').getContext("2d");;
+
+sock.on('newPositions',function(data){
+  console.log(data);
+    ctx.clearRect(0,0,500,500);
+     ctx.fillText('P', data.x,data.y);
+});
