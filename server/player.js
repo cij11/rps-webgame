@@ -6,6 +6,18 @@ class Player {
     this._sock = socket;
     this._id = socket.id;
     this._name = 'Guest-' + Math.floor((Math.random() * 100000) + 100000);
+
+    this._unit = {
+      x: 30,
+      y: 30
+    };
+
+    this._keys = {
+      up: false,
+      down: false,
+      left: false,
+      right: false
+    };
   }
 
   getSocket() {
@@ -20,11 +32,8 @@ class Player {
     this._sock.emit('message', msg);
   }
 
-  sendGameState() {
-    this._sock.emit('newPositions', {
-      x: 30,
-      y: 30
-    });
+  sendGameState(data) {
+    this._sock.emit('newPositions', data);
   }
 
   setName(name) {
@@ -35,8 +44,33 @@ class Player {
     return this._name;
   }
 
+  getUnit() {
+    return this._unit;
+  }
+
   sendPlayerNameList(playerNameList) {
     this._sock.emit('update-names', playerNameList);
+  }
+
+  setKeyPress(event) {
+    //Check input event contains an inputId
+    var inputId = _.get(event, 'inputId', null);
+    if (inputId != null) {
+      //Check inputId coresponds to property of _keys object
+      if (_.has(this._keys, inputId)) {
+        //Set property to state, or false if state not present
+        this._keys[inputId] = _.get(event, 'state', false);
+      }
+    }
+  }
+
+  update() {
+    console.log(this._keys);
+    if(this._keys.right) {
+      this._unit.x = this._unit.x + 5;
+      console.log('Right pressed');
+      console.log(this._unit.x);
+    }
   }
 }
 

@@ -57,7 +57,6 @@ const addButtonListeners = () => {
     const button = document.getElementById(id);
     button.addEventListener('click', () => {
       sock.emit('move', id);
-      sock.emit('rename', id);
     })
   })
 };
@@ -79,5 +78,33 @@ const ctx = document.querySelector('#ctx').getContext("2d");;
 sock.on('newPositions',function(data){
   console.log(data);
     ctx.clearRect(0,0,500,500);
-     ctx.fillText('P', data.x,data.y);
+    var units = data.units;
+    _.forEach(units, unit => {
+      ctx.fillText('P', unit.x,unit.y);
+    })
+
 });
+
+
+
+document.onkeydown = function(event){
+    if(event.keyCode === 68)    //d
+        sock.emit('keyPress',{inputId:'right',state:true});
+    else if(event.keyCode === 83)   //s
+        sock.emit('keyPress',{inputId:'down',state:true});
+    else if(event.keyCode === 65) //a
+        sock.emit('keyPress',{inputId:'left',state:true});
+    else if(event.keyCode === 87) // w
+        sock.emit('keyPress',{inputId:'up',state:true});
+
+}
+document.onkeyup = function(event){
+    if(event.keyCode === 68)    //d
+        sock.emit('keyPress',{inputId:'right',state:false});
+    else if(event.keyCode === 83)   //s
+        sock.emit('keyPress',{inputId:'down',state:false});
+    else if(event.keyCode === 65) //a
+        sock.emit('keyPress',{inputId:'left',state:false});
+    else if(event.keyCode === 87) // w
+        sock.emit('keyPress',{inputId:'up',state:false});
+}

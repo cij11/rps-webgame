@@ -8,7 +8,7 @@ class ReadyRoom {
 
   constructor(id) {
       this._id = id;
-      this._maxPlayers = 2;
+      this._maxPlayers = 1;
       this._players = [];
       this._isGameStarted = false;
 
@@ -49,9 +49,14 @@ class ReadyRoom {
       this.sendPlayerNameList();
     });
 
+    sock.on('keyPress', event => {
+      player.setKeyPress(event);
+    });
+
+    //Main loop
     var self = this;
     var loop = function() {
-      self.messagePlayers("Frame processed");
+      self.updateGameState();
       self.sendGameState();
       setTimeout(loop, 100);
     }
@@ -87,8 +92,16 @@ class ReadyRoom {
   }
 
   sendGameState() {
+    var playerUnits = _.map(this._players, player => {
+      return player.getUnit();
+    });
+
+    var data = {
+      units: playerUnits
+    };
+
     _.forEach(this._players, player => {
-      player.sendGameState();
+      player.sendGameState(data);
     });
   }
 
@@ -102,11 +115,12 @@ class ReadyRoom {
     });
   }
 
-  _gameLoop() {
-    var self = this;
-  //  this.messagePlayers("Frame processed");
-    setTimeout((this._gameLoop), self._frameDelay);
+  updateGameState() {
+    _.forEach(this._players, player => {
+      player.update();
+    })
   }
+
 }
 
 module.exports = ReadyRoom;
