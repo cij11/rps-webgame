@@ -27,8 +27,8 @@ class ReadyRoom {
     // Register messaging.
     // Once a message is recieved from client, send to all players in this
     // ready room.
-    sock.on('message', text => this.messagePlayers(text));
-    this.messagePlayers(`Player joined room ${this._id}.`);
+    sock.on('message', text => this.messagePlayers(player.getName() + ': ' + text));
+    this.messagePlayers(`${player.getName()} joined room ${this._id}.`);
     this.sendPlayerNameList();
 
     console.log('Player joined room: ' + this._id);
