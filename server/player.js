@@ -7,11 +7,6 @@ class Player {
     this._id = socket.id;
     this._name = 'Guest-' + Math.floor((Math.random() * 100000) + 100000);
 
-    this._unit = {
-      x: 30,
-      y: 30
-    };
-
     this._keys = {
       up: false,
       down: false,
@@ -44,10 +39,6 @@ class Player {
     return this._name;
   }
 
-  getUnit() {
-    return this._unit;
-  }
-
   sendPlayerNameList(playerNameList) {
     this._sock.emit('update-names', playerNameList);
   }
@@ -64,13 +55,8 @@ class Player {
     }
   }
 
-  update() {
-    console.log(this._keys);
-    if(this._keys.right) {
-      this._unit.x = this._unit.x + 5;
-      console.log('Right pressed');
-      console.log(this._unit.x);
-    }
+  getKeyPress(inputId) {
+    return _.get(this._keys, inputId, false);
   }
 }
 

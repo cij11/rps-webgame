@@ -3,6 +3,7 @@
 */
 
 const _ = require('lodash');
+const Game = require('./game.js');
 
 class ReadyRoom {
 
@@ -53,17 +54,15 @@ class ReadyRoom {
       player.setKeyPress(event);
     });
 
+    var game;
     //Main loop
-    var self = this;
-    var loop = function() {
-      self.updateGameState();
-      self.sendGameState();
-      setTimeout(loop, 100);
-    }
+    
+
 
     if (this._isFull()) {
       this._isGameStarted = true;
-      setTimeout(loop, 100);
+      game = new Game(this._players);
+
     }
   }
 
@@ -91,20 +90,6 @@ class ReadyRoom {
     });
   }
 
-  sendGameState() {
-    var playerUnits = _.map(this._players, player => {
-      return player.getUnit();
-    });
-
-    var data = {
-      units: playerUnits
-    };
-
-    _.forEach(this._players, player => {
-      player.sendGameState(data);
-    });
-  }
-
   sendPlayerNameList() {
     var playerNameList = _.map(this._players, player => {
       return player.getName();
@@ -114,13 +99,6 @@ class ReadyRoom {
       player.sendPlayerNameList(playerNameList);
     });
   }
-
-  updateGameState() {
-    _.forEach(this._players, player => {
-      player.update();
-    })
-  }
-
 }
 
 module.exports = ReadyRoom;
