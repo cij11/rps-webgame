@@ -23,24 +23,12 @@ class Player {
     return this._id;
   }
 
-  messagePlayer(msg) {
-    this._sock.emit('message', msg);
-  }
-
-  sendGameState(data) {
-    this._sock.emit('newPositions', data);
-  }
-
   setName(name) {
     this._name = name;
   }
 
   getName() {
     return this._name;
-  }
-
-  sendPlayerNameList(playerNameList) {
-    this._sock.emit('update-names', playerNameList);
   }
 
   setKeyPress(event) {
@@ -57,6 +45,22 @@ class Player {
 
   getKeyPress(inputId) {
     return _.get(this._keys, inputId, false);
+  }
+
+
+  /***************************************************
+    Server to Client communications.
+  ***************************************************/
+  messagePlayer(msg) {
+    this._sock.emit('message', msg);
+  }
+
+  sendGameState(data) {
+    this._sock.emit('newPositions', data);
+  }
+
+  sendPlayerNameList(playerNameList) {
+    this._sock.emit('update-names', playerNameList);
   }
 }
 

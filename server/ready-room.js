@@ -9,7 +9,7 @@ class ReadyRoom {
 
   constructor(id) {
       this._id = id;
-      this._maxPlayers = 1;
+      this._maxPlayers = 2;
       this._players = [];
       this._isGameStarted = false;
 
@@ -54,14 +54,9 @@ class ReadyRoom {
       player.setKeyPress(event);
     });
 
-    var game;
-    //Main loop
-    
-
-
     if (this._isFull()) {
       this._isGameStarted = true;
-      game = new Game(this._players);
+      var game = new Game(this._players);
 
     }
   }

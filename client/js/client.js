@@ -54,26 +54,15 @@ sock.on('update-names', nameList => {
   })
 })
 
-const addButtonListeners = () => {
-  ['rock', 'paper', 'scissors'].forEach((id) => {
-    const button = document.getElementById(id);
-    button.addEventListener('click', () => {
-      sock.emit('move', id);
-    })
-  })
-};
-
 const scrollMessagesToBottom = () => {
   var messageList = document.querySelector('#events');
   messageList.scrollTop = messageList.scrollHeight;
 }
 
-writeEvent('Welcome to RPS');
+writeEvent('Welcome to Game');
 
 document.querySelector('#chat-form').addEventListener('submit', onChatSubmitted);
 document.querySelector('#rename-form').addEventListener('submit', onRenameSubmitted);
-
-addButtonListeners();
 
 const ctx = document.querySelector('#ctx').getContext("2d");;
 
