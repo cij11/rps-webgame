@@ -7,6 +7,12 @@ class Game {
     this._players = players;
     this._units = null;
 
+    this._mapW = 20;
+    this._mapH = 20;
+    this._tileSize = 40
+
+    this._map;
+
     var self = this;
 
 
@@ -28,6 +34,7 @@ class Game {
   */
   _initializeGame() {
     this._units = this._createUnits(this._players);
+    this._map  = this._generateMap(this._mapW, this._mapH);
   }
 
   /*
@@ -39,6 +46,27 @@ class Game {
       return new Unit(30, 30, player);
     });
   }
+
+  /*
+    Create a map. 0 is an empty tile
+  */
+   _generateMap(mapW, mapH) {
+     var map = [];
+      for (var j = 0; j < mapH; j++) {
+        var row = [];
+        for (var i = 0; i < mapW; i++) {
+          if (Math.random() < 0.8) {
+            row.push(0);
+          }
+          else {
+            row.push(1);
+          }
+        }
+        map.push(row);
+      }
+      console.log(map);
+      return map;
+   }
 
   /*
     Perform game logic
@@ -59,7 +87,8 @@ class Game {
     });
 
     var data = {
-      units: unitInfo
+      units: unitInfo,
+      map: this._map
     };
 
     _.forEach(this._players, player => {

@@ -48,7 +48,6 @@ class Unit {
   _updatePosition() {
     this.x = this.x + this.xdir * this.speed;
     this.y = this.y + this.ydir * this.speed;
-    console.log(this.x);
   }
 
   setXdir(dir) {

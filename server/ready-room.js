@@ -9,7 +9,7 @@ class ReadyRoom {
 
   constructor(id) {
       this._id = id;
-      this._maxPlayers = 2;
+      this._maxPlayers = 1;
       this._players = [];
       this._isGameStarted = false;
 

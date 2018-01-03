@@ -67,8 +67,20 @@ document.querySelector('#rename-form').addEventListener('submit', onRenameSubmit
 const ctx = document.querySelector('#ctx').getContext("2d");;
 
 sock.on('newPositions',function(data){
-  console.log(data);
+//  console.log(data);
     ctx.clearRect(0,0,500,500);
+    ctx.fillStyle = 'green';
+
+    var map = data.map;
+
+    var tileSize = 20;
+    _.forEach(map, function(row, j) {
+      _.forEach(row, function(col, i) {
+        if (map[j][i] == 1){
+        ctx.fillRect(i*tileSize, j*tileSize, tileSize, tileSize);
+      }
+      })
+    });
     var units = data.units;
     _.forEach(units, unit => {
       ctx.fillText('P', unit.x,unit.y);
