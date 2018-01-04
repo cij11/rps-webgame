@@ -25,9 +25,7 @@ class Game {
       }
     };
 
-
     var self = this;
-
 
     //Define main game loop
     var loop = function() {

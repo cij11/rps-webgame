@@ -50,16 +50,61 @@ class Unit {
   }
 
   _updatePosition(map) {
-    var proposedX = this.x + this.xdir * this.speed,
-    proposedY = this.y + this.ydir * this.speed,
-    xEdge = proposedX + this.xdir * this.halfWidth,
-    yEdge = proposedY + this.ydir * this.halfWidth,
-    destinationTileType = map.getTileAtPixelCoords(xEdge, yEdge);
+    this.x = this.x + this.xdir * this.speed,
+    this.y = this.y + this.ydir * this.speed;
 
-    if (destinationTileType === 0) {
-      this.x = proposedX;
-      this.y = proposedY;
-    }
+    this._resolveTileOverlaps(map);
+  }
+
+  _resolveTileOverlaps(map) {
+    var topLeft = {
+      x: this.x - this.halfWidth,
+      y: this.y - this.halfWidth
+    },
+    topRight = {
+      x: this.x + this.halfWidth,
+      y: this.y - this.halfWidth
+    },
+    botLeft = {
+      x: this.x - this.halfWidth,
+      y: this.y + this.halfWidth
+    },
+    botRight = {
+      x: this.x + this.halfWidth,
+      y: this.y + this.halfWidth
+    };
+
+
+    var corners = [];
+    corners.push(topLeft);
+    corners.push(topRight);
+    corners.push(botLeft);
+    corners.push(botRight);
+
+    this._resolveCornerOverlap(corners, map);
+  }
+
+  _resolveCornerOverlap(corners, map) {
+    _.forEach(corners, corner => {
+      var destinationTileType = map.getTileAtPixelCoords(corner.x, corner.y);
+      if (destinationTileType != 0) {
+        console.log('Corner colliding');
+        //Extrude the unit by the smallest possible distance
+        var xPercent = corner.x - Math.floor(corner.x/map.tileSize) * map.tileSize;
+        var yPercent = corner.y - Math.floor(corner.y/map.tileSize) * map.tileSize;
+
+        var xOverlap = xPercent < map.tileSize/2 ? -xPercent : map.tileSize - xPercent;
+        var yOverlap = yPercent < map.tileSize/2 ? -yPercent : map.tileSize - yPercent;
+
+        if (Math.abs(xOverlap) < Math.abs(yOverlap)) {
+          this.x = this.x + xOverlap;
+        } else {
+          this.y = this.y + yOverlap;
+        }
+      } else {
+        console.log('no corner collision');
+      }
+    })
   }
 
   setXdir(dir) {
