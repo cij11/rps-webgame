@@ -6,10 +6,11 @@ class Unit {
     this.x = x;
     this.y = y;
     this.player = player;
+    this.halfWidth = 10;
 
     this.xdir = 1;
     this.ydir = 0;
-    this.speed = 5;
+    this.speed = 1;
   }
 
   getPosition() {
@@ -20,7 +21,10 @@ class Unit {
   }
 
   getRenderingData() {
-    return this.getPosition();
+    return {
+      position: this.getPosition(),
+      halfWidth: this.halfWidth
+    }
   }
 
   readInput() {
@@ -41,13 +45,21 @@ class Unit {
       }
   }
 
-  update() {
-    this._updatePosition();
+  update(map) {
+    this._updatePosition(map);
   }
 
-  _updatePosition() {
-    this.x = this.x + this.xdir * this.speed;
-    this.y = this.y + this.ydir * this.speed;
+  _updatePosition(map) {
+    var proposedX = this.x + this.xdir * this.speed,
+    proposedY = this.y + this.ydir * this.speed,
+    xEdge = proposedX + this.xdir * this.halfWidth,
+    yEdge = proposedY + this.ydir * this.halfWidth,
+    destinationTileType = map.getTileAtPixelCoords(xEdge, yEdge);
+
+    if (destinationTileType === 0) {
+      this.x = proposedX;
+      this.y = proposedY;
+    }
   }
 
   setXdir(dir) {

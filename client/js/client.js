@@ -71,19 +71,21 @@ sock.on('newPositions',function(data){
     ctx.clearRect(0,0,500,500);
     ctx.fillStyle = 'green';
 
-    var map = data.map;
+    var tiles = data.map.tiles;
+    var tileSize = data.map.tileSize;
 
-    var tileSize = 20;
-    _.forEach(map, function(row, j) {
+    _.forEach(tiles, function(row, j) {
       _.forEach(row, function(col, i) {
-        if (map[j][i] == 1){
+        if (tiles[j][i] == 1){
         ctx.fillRect(i*tileSize, j*tileSize, tileSize, tileSize);
       }
       })
     });
+
+    ctx.fillStyle = 'red';
     var units = data.units;
     _.forEach(units, unit => {
-      ctx.fillText('P', unit.x,unit.y);
+      ctx.fillRect(unit.position.x-unit.halfWidth,unit.position.y-unit.halfWidth, 20, 20);
     })
 
 });

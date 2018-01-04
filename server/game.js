@@ -7,11 +7,24 @@ class Game {
     this._players = players;
     this._units = null;
 
-    this._mapW = 20;
-    this._mapH = 20;
-    this._tileSize = 40
+    this._map = {
+      width : 20,
+      height : 20,
+      tileSize : 20,
+      tiles : [],
 
-    this._map;
+      getTileAtPixelCoords : function(x, y) {
+        var xCoord = Math.floor(x/this.tileSize),
+        yCoord = Math.floor(y/this.tileSize);
+
+        if (xCoord >= 0 && xCoord < this.width && yCoord >= 0 && yCoord < this.height) {
+          return this.tiles[yCoord][xCoord];
+        } else {
+          return 0;
+        };
+      }
+    };
+
 
     var self = this;
 
@@ -34,7 +47,7 @@ class Game {
   */
   _initializeGame() {
     this._units = this._createUnits(this._players);
-    this._map  = this._generateMap(this._mapW, this._mapH);
+    this._map.tiles  = this._generateTiles(this._map.width, this._map.height);
   }
 
   /*
@@ -50,8 +63,8 @@ class Game {
   /*
     Create a map. 0 is an empty tile
   */
-   _generateMap(mapW, mapH) {
-     var map = [];
+   _generateTiles(mapW, mapH) {
+     var tiles = [];
       for (var j = 0; j < mapH; j++) {
         var row = [];
         for (var i = 0; i < mapW; i++) {
@@ -62,10 +75,10 @@ class Game {
             row.push(1);
           }
         }
-        map.push(row);
+        tiles.push(row);
       }
-      console.log(map);
-      return map;
+      console.log(tiles);
+      return tiles;
    }
 
   /*
@@ -74,7 +87,7 @@ class Game {
   _updateGameState() {
     _.forEach(this._units, unit => {
       unit.readInput();
-      unit.update();
+      unit.update(this._map);
     })
   }
 
