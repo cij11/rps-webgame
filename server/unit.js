@@ -60,124 +60,64 @@ class Unit {
     var unitCoords = map.getPixelCoords(this.x, this.y);
 
     //Edge collisions
-    var leftTileType = map.getTileTypeByTileCoords(unitCoords.x - 1, unitCoords.y);
-    if (leftTileType != 0){
-      var leftTileEdge = unitCoords.x * map.tileSize;
-      var leftCircleEdge = this.x - this.halfWidth;
-      var overlap = leftTileEdge - leftCircleEdge;
-      if (overlap > 0) {
-        this.x = this.x + overlap;
-      }
-    }
+    var wTileType = map.getTileTypeByTileCoords(unitCoords.x - 1, unitCoords.y);
+    var wPoint = {x: unitCoords.x * map.tileSize, y: this.y };
 
-    var rightTileType = map.getTileTypeByTileCoords(unitCoords.x + 1, unitCoords.y);
-    if (rightTileType != 0){
-      var rightTileEdge = (unitCoords.x + 1)* map.tileSize;
-      var rightCircleEdge = this.x + this.halfWidth;
-      var overlap = rightTileEdge - rightCircleEdge;
-      if (overlap < 0) {
-        this.x = this.x + overlap;
-      }
-    }
+    var eTileType = map.getTileTypeByTileCoords(unitCoords.x + 1, unitCoords.y);
+    var ePoint = {x: (unitCoords.x + 1) * map.tileSize, y: this.y };
 
-    var upTileType = map.getTileTypeByTileCoords(unitCoords.x, unitCoords.y - 1);
-    if (upTileType != 0){
-      var upTileEdge = unitCoords.y * map.tileSize;
-      var upCircleEdge = this.y - this.halfWidth;
-      var overlap = upTileEdge - upCircleEdge;
-      if (overlap > 0) {
-        this.y = this.y + overlap;
-      }
-    }
+    var nTileType = map.getTileTypeByTileCoords(unitCoords.x, unitCoords.y - 1);
+    var nPoint = {x: this.x, y: unitCoords.y * map.tileSize};
 
-    var downTileType = map.getTileTypeByTileCoords(unitCoords.x, unitCoords.y + 1);
-    if (downTileType != 0){
-      var downTileEdge = (unitCoords.y + 1)* map.tileSize;
-      var downCircleEdge = this.y + this.halfWidth;
-      var overlap = downTileEdge - downCircleEdge;
-      if (overlap < 0) {
-        this.y = this.y + overlap;
-      }
-    }
+    var sTileType = map.getTileTypeByTileCoords(unitCoords.x, unitCoords.y + 1);
+    var sPoint = {x: this.x, y: (unitCoords.y + 1)* map.tileSize};
 
     //Corner collisions
     var nwTileType = map.getTileTypeByTileCoords(unitCoords.x - 1, unitCoords.y - 1);
-    if (nwTileType != 0) {
-      var cornerX = unitCoords.x * map.tileSize;
-      var cornerY = unitCoords.y * map.tileSize;
-
-      var xDisp = this.x - cornerX;
-      var yDisp = this.y - cornerY;
-
-      var dist = Math.sqrt(xDisp * xDisp + yDisp * yDisp);
-
-      var overlap = this.halfWidth - dist;
-      if (overlap > 0) {
-        var ratio = overlap / dist;
-
-        this.x = this.x + ratio * xDisp;
-        this.y = this.y + ratio * yDisp;
-      }
-    }
+    var nwPoint = {x: unitCoords.x * map.tileSize, y: unitCoords.y * map.tileSize};
 
     var neTileType = map.getTileTypeByTileCoords(unitCoords.x + 1, unitCoords.y - 1);
-    if (neTileType != 0) {
-      var cornerX = (unitCoords.x + 1) * map.tileSize;
-      var cornerY = unitCoords.y * map.tileSize;
-
-      var xDisp = this.x - cornerX;
-      var yDisp = this.y - cornerY;
-
-      var dist = Math.sqrt(xDisp * xDisp + yDisp * yDisp);
-
-      var overlap = this.halfWidth - dist;
-      if (overlap > 0) {
-        var ratio = overlap / dist;
-
-        this.x = this.x + ratio * xDisp;
-        this.y = this.y + ratio * yDisp;
-      }
-    }
+    var nePoint = {x: (unitCoords.x + 1) * map.tileSize, y: unitCoords.y * map.tileSize};
 
     var swTileType = map.getTileTypeByTileCoords(unitCoords.x - 1, unitCoords.y + 1);
-    if (swTileType != 0) {
-      var cornerX = unitCoords.x * map.tileSize;
-      var cornerY = (unitCoords.y + 1) * map.tileSize;
-
-      var xDisp = this.x - cornerX;
-      var yDisp = this.y - cornerY;
-
-      var dist = Math.sqrt(xDisp * xDisp + yDisp * yDisp);
-
-      var overlap = this.halfWidth - dist;
-      if (overlap > 0) {
-        var ratio = overlap / dist;
-
-        this.x = this.x + ratio * xDisp;
-        this.y = this.y + ratio * yDisp;
-      }
-    }
+    var swPoint = {x: unitCoords.x * map.tileSize, y:  (unitCoords.y + 1) * map.tileSize};
 
     var seTileType = map.getTileTypeByTileCoords(unitCoords.x + 1, unitCoords.y + 1);
-    if (seTileType != 0) {
-      var cornerX = (unitCoords.x + 1) * map.tileSize;
-      var cornerY = (unitCoords.y + 1) * map.tileSize;
+    var sePoint = {x: (unitCoords.x + 1) * map.tileSize, y: (unitCoords.y + 1) * map.tileSize};
 
-      var xDisp = this.x - cornerX;
-      var yDisp = this.y - cornerY;
+    var pointsToCheck = [];
+    pointsToCheck.push({point: wPoint, tile: wTileType});
+    pointsToCheck.push({point: ePoint, tile: eTileType});
+    pointsToCheck.push({point: nPoint, tile: nTileType});
+    pointsToCheck.push({point: sPoint, tile: sTileType});
 
-      var dist = Math.sqrt(xDisp * xDisp + yDisp * yDisp);
+    pointsToCheck.push({point: nwPoint, tile: nwTileType});
+    pointsToCheck.push({point: nePoint, tile: neTileType});
+    pointsToCheck.push({point: swPoint, tile: swTileType});
+    pointsToCheck.push({point: sePoint, tile: seTileType});
 
-      var overlap = this.halfWidth - dist;
-      if (overlap > 0) {
-        var ratio = overlap / dist;
-
-        this.x = this.x + ratio * xDisp;
-        this.y = this.y + ratio * yDisp;
+    _.forEach(pointsToCheck, check => {
+      if (check.tile != 0) {
+        console.log('collision' + new Date());
+        this.extrudeCirclePointOverlap(check.point.x, check.point.y);
       }
-    }
+    });
   }
 
+  extrudeCirclePointOverlap(pointX, pointY) {
+    var xDisp = this.x - pointX;
+    var yDisp = this.y - pointY;
+
+    var dist = Math.sqrt(xDisp * xDisp + yDisp * yDisp);
+
+    var overlap = this.halfWidth - dist;
+    if (overlap > 0) {
+      var ratio = overlap / dist;
+
+      this.x = this.x + ratio * xDisp;
+      this.y = this.y + ratio * yDisp;
+    }
+  }
 
   setXdir(dir) {
     this.xdir = Math.sign(dir);
