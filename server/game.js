@@ -1,3 +1,5 @@
+"use strict";
+
 const _ = require('lodash');
 const Unit = require('./unit.js');
 const Player = require('./player.js');

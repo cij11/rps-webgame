@@ -1,3 +1,5 @@
+"use strict";
+
 /* Class declaration syntax sugar from ECMAScript 2015
    Syntactically similar to:
 

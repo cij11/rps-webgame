@@ -1,3 +1,5 @@
+"use strict";
+
 /*
   Ready rooms fill with players as they join the Server
 */
