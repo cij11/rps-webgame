@@ -82,10 +82,14 @@ sock.on('newPositions',function(data){
       })
     });
 
-    ctx.fillStyle = 'red';
+
     var units = data.units;
     _.forEach(units, unit => {
-      ctx.fillRect(unit.position.x-unit.halfWidth,unit.position.y-unit.halfWidth, 20, 20);
+      ctx.beginPath();
+      ctx.fillStyle = 'red';
+      ctx.arc(unit.position.x,unit.position.y, unit.halfWidth, 0, 2* Math.PI);
+      ctx.fill();
+      ctx.closePath();
     })
 
 });

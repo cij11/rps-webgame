@@ -57,55 +57,127 @@ class Unit {
   }
 
   _resolveTileOverlaps(map) {
-    var topLeft = {
-      x: this.x - this.halfWidth,
-      y: this.y - this.halfWidth
-    },
-    topRight = {
-      x: this.x + this.halfWidth,
-      y: this.y - this.halfWidth
-    },
-    botLeft = {
-      x: this.x - this.halfWidth,
-      y: this.y + this.halfWidth
-    },
-    botRight = {
-      x: this.x + this.halfWidth,
-      y: this.y + this.halfWidth
-    };
+    var unitCoords = map.getPixelCoords(this.x, this.y);
 
-
-    var corners = [];
-    corners.push(topLeft);
-    corners.push(topRight);
-    corners.push(botLeft);
-    corners.push(botRight);
-
-    this._resolveCornerOverlap(corners, map);
-  }
-
-  _resolveCornerOverlap(corners, map) {
-    _.forEach(corners, corner => {
-      var destinationTileType = map.getTileAtPixelCoords(corner.x, corner.y);
-      if (destinationTileType != 0) {
-        console.log('Corner colliding');
-        //Extrude the unit by the smallest possible distance
-        var xPercent = corner.x - Math.floor(corner.x/map.tileSize) * map.tileSize;
-        var yPercent = corner.y - Math.floor(corner.y/map.tileSize) * map.tileSize;
-
-        var xOverlap = xPercent < map.tileSize/2 ? -xPercent : map.tileSize - xPercent;
-        var yOverlap = yPercent < map.tileSize/2 ? -yPercent : map.tileSize - yPercent;
-
-        if (Math.abs(xOverlap) < Math.abs(yOverlap)) {
-          this.x = this.x + xOverlap;
-        } else {
-          this.y = this.y + yOverlap;
-        }
-      } else {
-        console.log('no corner collision');
+    //Edge collisions
+    var leftTileType = map.getTileTypeByTileCoords(unitCoords.x - 1, unitCoords.y);
+    if (leftTileType != 0){
+      var leftTileEdge = unitCoords.x * map.tileSize;
+      var leftCircleEdge = this.x - this.halfWidth;
+      var overlap = leftTileEdge - leftCircleEdge;
+      if (overlap > 0) {
+        this.x = this.x + overlap;
       }
-    })
+    }
+
+    var rightTileType = map.getTileTypeByTileCoords(unitCoords.x + 1, unitCoords.y);
+    if (rightTileType != 0){
+      var rightTileEdge = (unitCoords.x + 1)* map.tileSize;
+      var rightCircleEdge = this.x + this.halfWidth;
+      var overlap = rightTileEdge - rightCircleEdge;
+      if (overlap < 0) {
+        this.x = this.x + overlap;
+      }
+    }
+
+    var upTileType = map.getTileTypeByTileCoords(unitCoords.x, unitCoords.y - 1);
+    if (upTileType != 0){
+      var upTileEdge = unitCoords.y * map.tileSize;
+      var upCircleEdge = this.y - this.halfWidth;
+      var overlap = upTileEdge - upCircleEdge;
+      if (overlap > 0) {
+        this.y = this.y + overlap;
+      }
+    }
+
+    var downTileType = map.getTileTypeByTileCoords(unitCoords.x, unitCoords.y + 1);
+    if (downTileType != 0){
+      var downTileEdge = (unitCoords.y + 1)* map.tileSize;
+      var downCircleEdge = this.y + this.halfWidth;
+      var overlap = downTileEdge - downCircleEdge;
+      if (overlap < 0) {
+        this.y = this.y + overlap;
+      }
+    }
+
+    //Corner collisions
+    var nwTileType = map.getTileTypeByTileCoords(unitCoords.x - 1, unitCoords.y - 1);
+    if (nwTileType != 0) {
+      var cornerX = unitCoords.x * map.tileSize;
+      var cornerY = unitCoords.y * map.tileSize;
+
+      var xDisp = this.x - cornerX;
+      var yDisp = this.y - cornerY;
+
+      var dist = Math.sqrt(xDisp * xDisp + yDisp * yDisp);
+
+      var overlap = this.halfWidth - dist;
+      if (overlap > 0) {
+        var ratio = overlap / dist;
+
+        this.x = this.x + ratio * xDisp;
+        this.y = this.y + ratio * yDisp;
+      }
+    }
+
+    var neTileType = map.getTileTypeByTileCoords(unitCoords.x + 1, unitCoords.y - 1);
+    if (neTileType != 0) {
+      var cornerX = (unitCoords.x + 1) * map.tileSize;
+      var cornerY = unitCoords.y * map.tileSize;
+
+      var xDisp = this.x - cornerX;
+      var yDisp = this.y - cornerY;
+
+      var dist = Math.sqrt(xDisp * xDisp + yDisp * yDisp);
+
+      var overlap = this.halfWidth - dist;
+      if (overlap > 0) {
+        var ratio = overlap / dist;
+
+        this.x = this.x + ratio * xDisp;
+        this.y = this.y + ratio * yDisp;
+      }
+    }
+
+    var swTileType = map.getTileTypeByTileCoords(unitCoords.x - 1, unitCoords.y + 1);
+    if (swTileType != 0) {
+      var cornerX = unitCoords.x * map.tileSize;
+      var cornerY = (unitCoords.y + 1) * map.tileSize;
+
+      var xDisp = this.x - cornerX;
+      var yDisp = this.y - cornerY;
+
+      var dist = Math.sqrt(xDisp * xDisp + yDisp * yDisp);
+
+      var overlap = this.halfWidth - dist;
+      if (overlap > 0) {
+        var ratio = overlap / dist;
+
+        this.x = this.x + ratio * xDisp;
+        this.y = this.y + ratio * yDisp;
+      }
+    }
+
+    var seTileType = map.getTileTypeByTileCoords(unitCoords.x + 1, unitCoords.y + 1);
+    if (seTileType != 0) {
+      var cornerX = (unitCoords.x + 1) * map.tileSize;
+      var cornerY = (unitCoords.y + 1) * map.tileSize;
+
+      var xDisp = this.x - cornerX;
+      var yDisp = this.y - cornerY;
+
+      var dist = Math.sqrt(xDisp * xDisp + yDisp * yDisp);
+
+      var overlap = this.halfWidth - dist;
+      if (overlap > 0) {
+        var ratio = overlap / dist;
+
+        this.x = this.x + ratio * xDisp;
+        this.y = this.y + ratio * yDisp;
+      }
+    }
   }
+
 
   setXdir(dir) {
     this.xdir = Math.sign(dir);

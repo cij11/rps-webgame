@@ -17,13 +17,32 @@ class Game {
         var xCoord = Math.floor(x/this.tileSize),
         yCoord = Math.floor(y/this.tileSize);
 
+        return this.getTileTypeByTileCoords(xCoord, yCoord);
+      },
+
+        getPixelCoords : function(x, y) {
+          var xCoord = Math.floor(x/this.tileSize),
+          yCoord = Math.floor(y/this.tileSize);
+
+          if (xCoord >= 0 && xCoord < this.width && yCoord >= 0 && yCoord < this.height) {
+          return {
+            x: xCoord,
+            y: yCoord
+          };
+        }
+        else {
+          return { x: 0, y: 0};
+        }
+      },
+
+      getTileTypeByTileCoords(xCoord, yCoord) {
         if (xCoord >= 0 && xCoord < this.width && yCoord >= 0 && yCoord < this.height) {
           return this.tiles[yCoord][xCoord];
         } else {
           return 0;
         };
       }
-    };
+      };
 
     var self = this;
 
