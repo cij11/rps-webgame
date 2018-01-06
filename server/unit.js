@@ -6,11 +6,11 @@ class Unit {
     this.x = x;
     this.y = y;
     this.player = player;
-    this.halfWidth = 10;
+    this.radius = 10;
 
     this.xdir = 1;
     this.ydir = 0;
-    this.speed = 1;
+    this.speed = 3;
   }
 
   getPosition() {
@@ -23,7 +23,7 @@ class Unit {
   getRenderingData() {
     return {
       position: this.getPosition(),
-      halfWidth: this.halfWidth
+      radius: this.radius
     }
   }
 
@@ -61,29 +61,33 @@ class Unit {
 
     //Edge collisions
     var wTileType = map.getTileTypeByTileCoords(unitCoords.x - 1, unitCoords.y);
-    var wPoint = {x: unitCoords.x * map.tileSize, y: this.y };
+    var wPoint = {x: unitCoords.x * map.tileSize, y: this.y, vert: true };
 
     var eTileType = map.getTileTypeByTileCoords(unitCoords.x + 1, unitCoords.y);
-    var ePoint = {x: (unitCoords.x + 1) * map.tileSize, y: this.y };
+    var ePoint = {x: (unitCoords.x + 1) * map.tileSize, y: this.y, vert: true };
 
     var nTileType = map.getTileTypeByTileCoords(unitCoords.x, unitCoords.y - 1);
-    var nPoint = {x: this.x, y: unitCoords.y * map.tileSize};
+    var nPoint = {x: this.x, y: unitCoords.y * map.tileSize, hor: true};
 
     var sTileType = map.getTileTypeByTileCoords(unitCoords.x, unitCoords.y + 1);
-    var sPoint = {x: this.x, y: (unitCoords.y + 1)* map.tileSize};
+    var sPoint = {x: this.x, y: (unitCoords.y + 1)* map.tileSize, hor: true};
 
     //Corner collisions
     var nwTileType = map.getTileTypeByTileCoords(unitCoords.x - 1, unitCoords.y - 1);
-    var nwPoint = {x: unitCoords.x * map.tileSize, y: unitCoords.y * map.tileSize};
+    var nwPoint = {x: unitCoords.x * map.tileSize, y: unitCoords.y * map.tileSize,
+      unreachable : (nTileType || wTileType)};
 
     var neTileType = map.getTileTypeByTileCoords(unitCoords.x + 1, unitCoords.y - 1);
-    var nePoint = {x: (unitCoords.x + 1) * map.tileSize, y: unitCoords.y * map.tileSize};
+    var nePoint = {x: (unitCoords.x + 1) * map.tileSize, y: unitCoords.y * map.tileSize,
+      unreachable : (nTileType || eTileType)};
 
     var swTileType = map.getTileTypeByTileCoords(unitCoords.x - 1, unitCoords.y + 1);
-    var swPoint = {x: unitCoords.x * map.tileSize, y:  (unitCoords.y + 1) * map.tileSize};
+    var swPoint = {x: unitCoords.x * map.tileSize, y:  (unitCoords.y + 1) * map.tileSize,
+      unreachable : (sTileType || wTileType)};
 
     var seTileType = map.getTileTypeByTileCoords(unitCoords.x + 1, unitCoords.y + 1);
-    var sePoint = {x: (unitCoords.x + 1) * map.tileSize, y: (unitCoords.y + 1) * map.tileSize};
+    var sePoint = {x: (unitCoords.x + 1) * map.tileSize, y: (unitCoords.y + 1) * map.tileSize,
+      unreachable : (sTileType || eTileType)};
 
     var pointsToCheck = [];
     pointsToCheck.push({point: wPoint, tile: wTileType});
@@ -97,8 +101,17 @@ class Unit {
     pointsToCheck.push({point: sePoint, tile: seTileType});
 
     _.forEach(pointsToCheck, check => {
-      if (check.tile != 0) {
-        console.log('collision' + new Date());
+      if (check.tile != 0 && !check.unreachable) {
+
+        // Previous collision resolutions may change the x or y coordinate
+        // of the unit. Need to ensure that the point on a horizontal or
+        // vertical edge is still the closest to the unit/circle's center.
+        if(check.hor) {
+          check.point.y = this.y;
+        }
+        if(check.vert) {
+          check.point.x = this.x;
+        }
         this.extrudeCirclePointOverlap(check.point.x, check.point.y);
       }
     });
@@ -110,7 +123,7 @@ class Unit {
 
     var dist = Math.sqrt(xDisp * xDisp + yDisp * yDisp);
 
-    var overlap = this.halfWidth - dist;
+    var overlap = this.radius - dist;
     if (overlap > 0) {
       var ratio = overlap / dist;
 

@@ -87,7 +87,7 @@ sock.on('newPositions',function(data){
     _.forEach(units, unit => {
       ctx.beginPath();
       ctx.fillStyle = 'red';
-      ctx.arc(unit.position.x,unit.position.y, unit.halfWidth, 0, 2* Math.PI);
+      ctx.arc(unit.position.x,unit.position.y, unit.radius, 0, 2* Math.PI);
       ctx.fill();
       ctx.closePath();
     })
