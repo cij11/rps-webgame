@@ -39,7 +39,7 @@ class Game {
         if (xCoord >= 0 && xCoord < this.width && yCoord >= 0 && yCoord < this.height) {
           return this.tiles[yCoord][xCoord];
         } else {
-          return 0;
+          return 1;
         };
       }
       };
